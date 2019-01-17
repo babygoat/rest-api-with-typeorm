@@ -25,7 +25,10 @@ createConnection().then(async connection => {
 */
 
 const app = express();
-const server = new http.Server(app)
+const server = new http.Server(app);
+
+// Setup database connection
+const connection = createConnection().catch(err => console.error(err));
 
 const port = 3000;
 const host = "localhost";
