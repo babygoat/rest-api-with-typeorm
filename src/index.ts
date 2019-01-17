@@ -1,9 +1,11 @@
 import "reflect-metadata";
 import * as bodyParser from 'body-parser';
 import * as express from 'express';
+import {Request, Response} from 'express';
 import * as http from 'http';
 import {createConnection} from "typeorm";
 import {User} from "./entity/User";
+import {userRoutes} from './routes/User';
 /*
 createConnection().then(async connection => {
 
@@ -27,8 +29,22 @@ createConnection().then(async connection => {
 const app = express();
 const server = new http.Server(app);
 
+
 // Setup database connection
 const connection = createConnection().catch(err => console.error(err));
+
+app.use(bodyParser.json());
+
+// Setup routes
+userRoutes.forEach(route => {
+  app[route.method](route.path, (req: Request, res: Response, next: Function) => {
+    console.log(req.body);
+    route.action(req, res)
+      .then(() => next)
+      .catch(err => next(err));
+  });
+});
+
 
 const port = 3000;
 const host = "localhost";
